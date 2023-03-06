@@ -26,10 +26,8 @@ response_dict = json.loads(response)
 print(response_dict)
 
 # Perform the action on the web element using Selenium
-xpath = response_dict['xpath']
+element = browser.find_element(By.XPATH, response_dict['xpath'])
 action = response_dict['action']
-
-element = browser.find_element(By.XPATH, xpath)
 if action == 'click':
     element.click()
 elif action == 'submit':
