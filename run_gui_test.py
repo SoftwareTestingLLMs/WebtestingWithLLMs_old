@@ -1,6 +1,19 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
+import openai
+import json
+
+# Get openai key from file
+with open("openai_key.json", "r") as file:
+    openai.api_key = json.load(file)["key"]
+
+completion = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=[{"role": "user", "content": "This is a test."}]
+)
+
+print(completion)
 
 # Open the web browser and navigate to the app's URL
 browser = webdriver.Chrome()
