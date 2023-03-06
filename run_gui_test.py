@@ -1,9 +1,16 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from bs4 import BeautifulSoup
 
 # Open the web browser and navigate to the app's URL
 browser = webdriver.Chrome()
 browser.get('https://sea-lion-app-q6nwz.ondigitalocean.app/sample1')
+
+# Get the HTML source code of the page
+html_source = browser.page_source
+
+# Use BeautifulSoup to parse the HTML source code
+soup = BeautifulSoup(html_source, 'html.parser')
 
 # Find the input field and enter text into it
 input_field = browser.find_element(By.ID, 'inputField')
@@ -24,6 +31,9 @@ clear_button.click()
 
 # Check if the input field is cleared
 assert '' == input_field.get_attribute('value')
+
+# Print the HTML structure of the page
+print(soup.prettify())
 
 # Close the web browser
 browser.quit()
