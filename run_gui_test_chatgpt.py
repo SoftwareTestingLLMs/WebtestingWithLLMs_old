@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 import openai
 import json
 
@@ -24,6 +25,19 @@ response = completion["choices"][0]["message"]["content"]
 response_dict = json.loads(response)
 print(response_dict)
 
+# Perform the action on the web element using Selenium
+xpath = response_dict['xpath']
+action = response_dict['action']
+
+element = browser.find_element(By.XPATH, xpath)
+if action == 'click':
+    element.click()
+elif action == 'submit':
+    element.submit()
+elif action == 'clear':
+    element.clear()
+else:
+    raise ValueError(f"Unknown action {action}")
 
 # Close the web browser
 browser.quit()
