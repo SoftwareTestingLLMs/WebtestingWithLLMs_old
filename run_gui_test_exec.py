@@ -25,7 +25,12 @@ completion = openai.ChatCompletion.create(
 response = completion["choices"][0]["message"]["content"]
 print(response)
 
-code_string = response
+# Extract code between <StartCode> and <EndCode> labels
+start_index = response.find("<StartCode>") + len("<StartCode>")
+end_index = response.find("<EndCode>")
+code_string = response[start_index:end_index]
+
+# Execute the code
 exec(code_string)
 
 # Close the web browser
