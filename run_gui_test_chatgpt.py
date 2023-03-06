@@ -20,7 +20,10 @@ completion = openai.ChatCompletion.create(
     messages=[{"role": "user", "content": task}]
 )
 
-print(completion)
+response = completion["choices"][0]["message"]["content"]
+response_dict = json.loads(response)
+print(response_dict)
+
 
 # Close the web browser
 browser.quit()
