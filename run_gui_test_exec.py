@@ -2,18 +2,23 @@ from selenium import webdriver
 import openai
 import json
 
+url = 'https://sea-lion-app-q6nwz.ondigitalocean.app/sample1'
+
 # Get openai key from file
 with open("openai_key.json", "r") as file:
     openai.api_key = json.load(file)["key"]
 
 # Open the web browser and navigate to the app's URL
 browser = webdriver.Chrome()
-browser.get('https://sea-lion-app-q6nwz.ondigitalocean.app/sample1')
+browser.get(url)
 
 # Get the HTML source code of the page
 html_source = browser.page_source
 
-task = "Your task is to test a web application using python and selenium. Start the python code with <StartCode> and finish the code with a <EndCode> label. Only print the code without further explanations. This is the web application: " + html_source
+# Close the web browser
+browser.quit()
+
+task = "Your task is to test a web application using python and selenium with the URL " + url + " . Start the python code with <StartCode> and finish the code with a <EndCode> label. Use only xpath commands like \"browser.find_element(By.XPATH, '//button[text()=\"Click me!\"]')\" to find elements. The error occurs because the test script does not handle the alert and tries to interact with the web page before dismissing it. The script should switch to the alert and dismiss it before proceeding with the next step. Wait 3 seconds between each interation with the GUI using the \"time.sleep(3) function\". Only print the code without further explanations. This is the web application: " + html_source
 
 print(task)
 
