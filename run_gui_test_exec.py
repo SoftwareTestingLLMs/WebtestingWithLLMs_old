@@ -18,7 +18,7 @@ html_source = browser.page_source
 # Close the web browser
 browser.quit()
 
-task = "Your task is to test a web application using python and selenium with the URL " + url + " . Start the python code with <StartCode> and finish the code with a <EndCode> label. Use \"browser = webdriver.Chrome()\" to open the web browser. Use only xpath commands like \"browser.find_element(By.XPATH, '//button[text()=\"Click me!\"]')\" to find elements. The script should switch to the alert and dismiss it before proceeding with the next step. Use assertions to test the correct behavior of the application. Wait 3 seconds between each interation with the GUI using the \"time.sleep(3) function\". Only print the code without further explanations. This is the web application: " + html_source
+task = "Your task is to test a web application using python and selenium with the URL " + url + " . Start the python code with <StartCode> and finish the code with a <EndCode> label. Use \"browser = webdriver.Chrome()\" to open the web browser. Use only xpath commands like \"browser.find_element(By.XPATH, '//button[text()=\"Click me!\"]')\" to find elements. If there is an alert, the script should switch to the alert and dismiss it before proceeding with the next step. Use assertions to test the correct behavior of the application. Wait 3 seconds between each interation with the GUI using the \"time.sleep(3) function\". Only print the code without further explanations. This is the web application: " + html_source
 
 print(task)
 
