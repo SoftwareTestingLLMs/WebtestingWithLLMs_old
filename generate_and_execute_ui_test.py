@@ -26,16 +26,21 @@ def main(url, base_dir):
 
     # Open the web browser and navigate to the app's URL
     browser = webdriver.Chrome()
-    browser.get(url)
+    file_path = os.path.abspath("MEDI-MARKT-PART.html")
+    browser.get("file://" + file_path)
 
     # Get the HTML source code of the page
     html_source = browser.page_source
     soup = BeautifulSoup(html_source, 'html.parser')
 
+    div_element = soup.find('div', {'class': 'col-sm-12 col-md-12 col-lg-7 col-xl-7'})
+
+    print(div_element)
+
     # Close the web browser
     browser.quit()
 
-    task = f"Your task is to test a web application using python and selenium with the URL {url}. Start the python code with <StartCode> and finish the code with a <EndCode> label. Use \"browser = webdriver.Chrome()\" to open the web browser. Use only xpath commands like \"browser.find_element(By.XPATH, '//button[text()=\"Click me!\"]')\" to find elements. If there is an alert, the script should switch to the alert and dismiss it before proceeding with the next step. Use assertions to test the correct behavior of the application. Only print the code without further explanations. This is the web application: {soup.body}"
+    task = f"Your task is to test a web application using python and selenium with the URL {url}. Start the python code with <StartCode> and finish the code with a <EndCode> label. Use \"browser = webdriver.Chrome()\" to open the web browser. Use only xpath commands like \"browser.find_element(By.XPATH, '//button[text()=\"Click me!\"]')\" to find elements. If there is an alert, the script should switch to the alert and dismiss it before proceeding with the next step. Use assertions to test the correct behavior of the application. Only print the code without further explanations. This is the web application: {div_element}"
 
     click.echo(task)
 
