@@ -11,13 +11,13 @@ browser.get(
 salutation = browser.find_element(By.XPATH, '//select[@id="salutation"]')
 salutation.send_keys('Herr')
 
-name = browser.find_element(By.XPATH, '/html/body/main/div[1]/div/div[1]/div/div[3]/div/form/div/div[2]/div[2]/input')
+name = browser.find_element(By.XPATH, '(//input[@id="name"])[2]')
 name.send_keys('Max')
 
-lastname = browser.find_element(By.XPATH, '/html/body/main/div[1]/div/div[1]/div/div[3]/div/form/div/div[2]/div[3]/input')
+lastname = browser.find_element(By.XPATH, '(//input[@id="lastname"])[2]')
 lastname.send_keys('Mustermann')
 
-phone = browser.find_element(By.XPATH, '/html/body/main/div[1]/div/div[1]/div/div[3]/div/form/div/div[3]/div[1]/input')
+phone = browser.find_element(By.XPATH, '(//input[@id="phone"])[2]')
 phone.send_keys('+49123456789')
 
 street = browser.find_element(By.XPATH, '//input[@id="street"]')
