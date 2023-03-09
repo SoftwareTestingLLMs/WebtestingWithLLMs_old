@@ -12,17 +12,14 @@ def generate_directory_path(url, base_dir):
     directory = url_parts.netloc + url_parts.path
 
     # Construct the full directory path
-    directory_path = os.path.join(base_dir, directory.lstrip("/"))
-    directory_path = directory_path.replace("/", os.path.sep)
-
-    return directory_path
+    return os.path.join(base_dir, directory.lstrip("/"))
 
 
 @click.command()
 @click.option('--url', default='https://sea-lion-app-q6nwz.ondigitalocean.app/sample1', help='The URL of the web application to test.')
 @click.option('--base_dir', default='ui_tests', help='The base directory where the ui tests should be saved.')
 def main(url, base_dir):
-    # Get openai key from file
+    # Get OpenAI API key from file
     with open("openai_key.json", "r") as file:
         openai.api_key = json.load(file)["key"]
 
@@ -57,7 +54,9 @@ def main(url, base_dir):
     directory_path = generate_directory_path(url, base_dir)
 
     # Save the generated test to file
-    os.makedirs(directory_path, exist_ok=True)
+    if not os.path.exists(directory_path):
+        os.makedirs(directory_path)
+
     with open(os.path.join(directory_path, "test.py"), "w") as file:
         file.write(code_string)
 
