@@ -1,5 +1,3 @@
-
-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.alert import Alert
@@ -27,4 +25,3 @@ assert button_clear.is_displayed() == True
 assert button_clear.is_enabled() == True
 button_clear.click()
 assert input_field.get_attribute("value") == ""
-
