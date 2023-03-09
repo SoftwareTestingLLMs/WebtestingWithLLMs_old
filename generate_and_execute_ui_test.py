@@ -6,13 +6,13 @@ import json
 from urllib.parse import urlparse
 
 
-def generate_directory_path(url):
+def generate_directory_path(url, base_dir):
     # Extract the directory name from the URL
     url_parts = urlparse(url)
     directory = url_parts.netloc + url_parts.path
 
     # Construct the full directory path
-    directory_path = os.path.join("ui_tests", directory.lstrip("/"))
+    directory_path = os.path.join(base_dir, directory.lstrip("/"))
     directory_path = directory_path.replace("/", os.path.sep)
 
     return directory_path
@@ -20,8 +20,8 @@ def generate_directory_path(url):
 
 @click.command()
 @click.option('--url', default='https://sea-lion-app-q6nwz.ondigitalocean.app/sample1', help='The URL of the web application to test.')
-def main(url):
-
+@click.option('--base_dir', default='ui_tests', help='The base directory where the ui tests should be saved.')
+def main(url, base_dir):
     # Get openai key from file
     with open("openai_key.json", "r") as file:
         openai.api_key = json.load(file)["key"]
@@ -54,7 +54,7 @@ def main(url):
     code_string = response[start_index:end_index]
 
     # Generate the directory path
-    directory_path = generate_directory_path(url)
+    directory_path = generate_directory_path(url, base_dir)
 
     # Save the generated test to file
     os.makedirs(directory_path, exist_ok=True)
