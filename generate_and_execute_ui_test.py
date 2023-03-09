@@ -5,7 +5,17 @@ import openai
 import json
 from urllib.parse import urlparse
 
-# Define the command-line options
+
+def generate_directory_path(url):
+    # Extract the directory name from the URL
+    url_parts = urlparse(url)
+    directory = url_parts.netloc + url_parts.path
+
+    # Construct the full directory path
+    directory_path = os.path.join("ui_tests", directory.lstrip("/"))
+    directory_path = directory_path.replace("/", os.path.sep)
+
+    return directory_path
 
 
 @click.command()
@@ -43,13 +53,10 @@ def main(url):
     end_index = response.find("<EndCode>")
     code_string = response[start_index:end_index]
 
-    # Extract the directory name from the URL
-    url_parts = urlparse(url)
-    directory = url_parts.netloc + url_parts.path
+    # Generate the directory path
+    directory_path = generate_directory_path(url)
 
     # Save the generated test to file
-    directory_path = os.path.join("ui_tests", directory.lstrip("/"))
-    directory_path = directory_path.replace("/", os.path.sep)
     os.makedirs(directory_path, exist_ok=True)
     with open(os.path.join(directory_path, "test.py"), "w") as file:
         file.write(code_string)
