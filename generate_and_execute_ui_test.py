@@ -1,7 +1,9 @@
 import click
+import os
 from selenium import webdriver
 import openai
 import json
+from urllib.parse import urlparse
 
 # Define the command-line options
 
@@ -40,6 +42,17 @@ def main(url):
     start_index = response.find("<StartCode>") + len("<StartCode>")
     end_index = response.find("<EndCode>")
     code_string = response[start_index:end_index]
+
+    # Extract the directory name from the URL
+    url_parts = urlparse(url)
+    directory = url_parts.netloc + url_parts.path
+
+    # Save the generated test to file
+    directory_path = os.path.join("ui_tests", directory.lstrip("/"))
+    directory_path = directory_path.replace("/", os.path.sep)
+    os.makedirs(directory_path, exist_ok=True)
+    with open(os.path.join(directory_path, "test.py"), "w") as file:
+        file.write(code_string)
 
     # Execute the code
     exec(code_string)
