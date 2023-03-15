@@ -9,23 +9,9 @@ def clean_html(html):
 
     # div_element = soup.find('div', {'class': 'col-sm-12 col-md-12 col-lg-7 col-xl-7'})
 
-    # Remove comments
-    for comment in soup.findAll(text=lambda text: isinstance(text, Comment)):
-        comment.extract()
-
     # Remove scripts
     for script in soup.findAll('script'):
         script.extract()
-
-    # Remove meta tags
-    for meta in soup.findAll('meta'):
-        if 'X-UA-Compatible' in meta.get('http-equiv', '') or 'viewport' in meta.get('name', ''):
-            meta.extract()
-
-    # Remove non-UI elements
-    for element in soup.select('body, [cbcookie], script, [nonce], [translations], link[rel="icon"]'):
-        element.extract()
-
 
     # Return the cleaned HTML code
     return str(soup)
