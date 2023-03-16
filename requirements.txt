@@ -4,4 +4,4 @@ openai
 click
 jupyterlab
 ipywidgets
-"transformers[torch]"
+transformers[torch]
