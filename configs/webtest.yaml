@@ -12,6 +12,6 @@ prompts:
   - "Use \"driver.find_element(By.ID, \"inputField\")\" to find the input field and write \"Test Input\" into it."
   - "Find the button that says \"Click me!\", using \"driver.find_element(By.XPATH, ...)\", and press it."
   - "Now find the button that says \"Clear\" and press it."
-device: "cpu"
-precision: "float32"
+general_device: "cpu"
+general_precision: "float32"
 debug: True
