@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from multiprocessing import Process
+from multiprocessing import Process, set_start_method
 
 import click
 import yaml
@@ -70,4 +70,5 @@ def main(config: str):
 
 
 if __name__ == "__main__":
+    set_start_method("spawn")
     main()
