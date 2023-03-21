@@ -6,7 +6,15 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
 def load_model(model_name: str, device: str, precision: str):
-    _dtype = torch.float16 if precision == "float16" else torch.float32
+    possible_dtypes = {
+        "float16": torch.float16,
+        "float32": torch.float32
+    }
+
+    try:
+        _dtype = possible_dtypes[precision]
+    except KeyError:
+        raise ValueError(f"Precision '{precision}' is not valid, supported are: {list(possible_dtypes.keys())}")
 
     assert ((precision == "float16" and "cuda" in device) or precision != "float16"), (
         "'float16' is only supported when using the GPU")

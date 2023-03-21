@@ -2,14 +2,17 @@ import os
 from datetime import datetime
 from multiprocessing import Process
 
+import click
+import yaml
+
 from tools.hf_model_utils import load_model, generate, truncate
 
 GENERATED_SCRIPTS_PATH = "generated_scripts"
 
 
-def run_model(histories, prompt_list, model_name, folder_path):
+def run_model(histories, prompt_list, model_name, device, precision, folder_path, debug: bool):
     print("Loading model...")
-    tokenizer, model = load_model(model_name, "cpu", "float32")
+    tokenizer, model = load_model(model_name, device, precision)
     print("Loading finished")
 
     def _wrap(p):
@@ -17,7 +20,7 @@ def run_model(histories, prompt_list, model_name, folder_path):
 
     for i, prompt in enumerate(prompt_list):
         histories = [h + _wrap(prompt) for h in histories]
-        completions = generate(histories, tokenizer, model, "cpu")
+        completions = generate(histories, tokenizer, model, device)
         histories = [h + f"{truncate(c, model_name)}\n\n" for h, c in zip(histories, completions)]
 
         # Prettify: removes two of the four newlines
@@ -30,26 +33,38 @@ def run_model(histories, prompt_list, model_name, folder_path):
         print(histories[0])
         print("-" * 10)
 
-    with open(os.path.join(folder_path, f"{model_name.replace('/', '-')}.py"), "w") as f:
-        f.write(histories[0])
+    if not debug:
+        with open(os.path.join(folder_path, f"{model_name.replace('/', '-')}.py"), "w") as f:
+            f.write(histories[0])
 
 
-def main():
-    # Setup folder
-    start_data = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    folder_path = os.path.join(GENERATED_SCRIPTS_PATH, start_data)
-    os.makedirs(folder_path, exist_ok=True)
+@click.command()
+@click.option("-c", "--config", type=str, required=True)
+def main(config: str):
+    with open(config, "r") as f:
+        config = yaml.safe_load(f)
 
-    models = ["Salesforce/codegen-350M-mono", "Salesforce/codegen-2B-mono"]
+    models = config["models"]
+    prompts = config["prompts"]
+    history = ["\n".join(config["history"]) + "\n\n"]
 
-    history = ["# Import libraries.\n\nimport numpy as np\n\n"]
-    prompts = ["Assign the string \"abcde\" to a variable named \"my_string\".",
-               "Lowercase the given string \"my_string\".",
-               "Assign the distinct characters of the string to a variable named \"chars\".",
-               "Sort these characters in alphabetical order.", "Print the resulting list of characters."]
+    device, precision = config["device"], config["precision"]
+
+    debug = config["debug"]
+
+    folder_path = None
+
+    if not debug:
+        # Setup folder
+        start_data = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        folder_path = os.path.join(GENERATED_SCRIPTS_PATH, start_data)
+        os.makedirs(folder_path, exist_ok=True)
+
+        with open(os.path.join(folder_path, "configs/default.yaml"), "w") as f:
+            yaml.safe_dump(config, f, default_flow_style=False)
 
     for model_name in models:
-        p = Process(target=run_model, args=(history, prompts, model_name))
+        p = Process(target=run_model, args=(history, prompts, model_name, device, precision, folder_path, debug))
         p.start()
         p.join()
         p.close()

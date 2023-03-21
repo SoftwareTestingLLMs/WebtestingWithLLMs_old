@@ -1,0 +1,15 @@
+models:
+  - "Salesforce/codegen-350M-mono"
+  - "Salesforce/codegen-2B-mono"
+history:
+  - "# Import libraries."
+  - "import numpy as np"
+prompts:
+  - "Assign the string \"abcde\" to a variable named \"my_string\"."
+  - "Lowercase the given string \"my_string\"."
+  - "Assign the distinct characters of the string to a variable named \"chars\"."
+  - "Sort these characters in alphabetical order."
+  - "Print the resulting list of characters."
+device: "cpu"
+precision: "float32"
+debug: True

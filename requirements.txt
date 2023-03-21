@@ -5,3 +5,4 @@ click
 jupyterlab
 ipywidgets
 transformers[torch]
+pyyaml
