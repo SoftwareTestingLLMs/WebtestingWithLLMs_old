@@ -59,22 +59,9 @@ def parse_model_configuration(model_configuration: List, general_device: str, ge
     return models
 
 
-def load_model(model_name: str, device: str, precision: str):
-    possible_dtypes = {
-        "float16": torch.float16,
-        "float32": torch.float32
-    }
-
-    try:
-        _dtype = possible_dtypes[precision]
-    except KeyError:
-        raise ValueError(f"Precision '{precision}' is not valid, supported are: {list(possible_dtypes.keys())}")
-
-    assert ((precision == "float16" and "cuda" in device) or precision != "float16"), (
-        "'float16' is only supported when using the GPU")
-
+def load_model(model_name: str, device: str, precision: torch.dtype):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=_dtype).to(device)
+    model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=precision).to(device)
 
     if "codegen" in model_name:
         tokenizer.pad_token = 50256
