@@ -50,6 +50,9 @@ def main(config: str):
 
     device, precision = config["device"], config["precision"]
 
+    if device == "gpu":
+        device = "cuda:0"
+
     debug = config["debug"]
 
     folder_path = None
@@ -60,7 +63,7 @@ def main(config: str):
         folder_path = os.path.join(GENERATED_SCRIPTS_PATH, start_data)
         os.makedirs(folder_path, exist_ok=True)
 
-        with open(os.path.join(folder_path, "configs/default.yaml"), "w") as f:
+        with open(os.path.join(folder_path, "default.yaml"), "w") as f:
             yaml.safe_dump(config, f, default_flow_style=False)
 
     for model_name in models:
