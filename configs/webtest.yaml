@@ -1,0 +1,17 @@
+models:
+  - "Salesforce/codegen-350M-mono"
+  - "Salesforce/codegen-2B-mono"
+  - "Salesforce/codegen-6B-mono"
+history:
+  - "# Import libraries."
+  - "from selenium import webdriver"
+  - "from selenium.webdriver.common.by import By"
+prompts:
+  - "Create a Chrome webdriver and store it in a variable name \"driver\"."
+  - "Open the URL \"https://sea-lion-app-q6nwz.ondigitalocean.app/sample1\" using \"driver\"."
+  - "Use \"driver.find_element(By.ID, \"inputField\")\" to find the input field and write \"Test Input\" into it."
+  - "Find the button that says \"Click me!\", using \"driver.find_element(By.XPATH, ...)\", and press it."
+  - "Now find the button that says \"Clear\" and press it."
+device: "cpu"
+precision: "float32"
+debug: True
