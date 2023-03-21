@@ -63,8 +63,7 @@ def load_model(model_name: str, device: str, precision: torch.dtype):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=precision).to(device)
 
-    if "codegen" in model_name:
-        tokenizer.pad_token = 50256
+    tokenizer.pad_token = tokenizer.eos_token
 
     return tokenizer, model
 
