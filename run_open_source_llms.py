@@ -5,7 +5,7 @@ from multiprocessing import Process
 import click
 import yaml
 
-from tools.hf_model_utils import load_model, generate, truncate
+from tools.hf_model_utils import load_model, generate, truncate, parse_model_configuration
 
 GENERATED_SCRIPTS_PATH = "generated_scripts"
 
@@ -44,14 +44,10 @@ def main(config: str):
     with open(config, "r") as f:
         config = yaml.safe_load(f)
 
-    models = config["models"]
     prompts = config["prompts"]
     history = ["\n".join(config["history"]) + "\n\n"]
 
-    device, precision = config["device"], config["precision"]
-
-    if device == "gpu":
-        device = "cuda:0"
+    models = parse_model_configuration(config["models"], config["general_device"], config["general_precision"])
 
     debug = config["debug"]
 
@@ -66,7 +62,7 @@ def main(config: str):
         with open(os.path.join(folder_path, "default.yaml"), "w") as f:
             yaml.safe_dump(config, f, default_flow_style=False)
 
-    for model_name in models:
+    for model_name, device, precision in models:
         p = Process(target=run_model, args=(history, prompts, model_name, device, precision, folder_path, debug))
         p.start()
         p.join()

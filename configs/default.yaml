@@ -1,6 +1,10 @@
 models:
   - "Salesforce/codegen-350M-mono"
-  - "Salesforce/codegen-2B-mono"
+  - "Salesforce/codegen-2B-mono":
+      device: "gpu"
+  - "Salesforce/codegen-6B-mono":
+      device: "gpu"
+      precision: "float16"
 history:
   - "# Import libraries."
   - "import numpy as np"
@@ -10,6 +14,6 @@ prompts:
   - "Assign the distinct characters of the string to a variable named \"chars\"."
   - "Sort these characters in alphabetical order."
   - "Print the resulting list of characters."
-device: "cpu"
-precision: "float32"
+general_device: "cpu"
+general_precision: "float32"
 debug: True

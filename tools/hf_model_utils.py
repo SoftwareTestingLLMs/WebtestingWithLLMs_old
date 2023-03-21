@@ -5,6 +5,60 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
+def parse_device(device: str):
+    if device == "gpu":
+        device = "cuda:0"
+
+        assert torch.cuda.is_available(), "Specifying the device 'gpu' requires that CUDA is available."
+    else:
+        assert device == "cpu", f"Device '{device}' is not valid, only 'cpu' or 'gpu' are valid devices."
+
+    return device
+
+
+def parse_precision(precision: str, parsed_device: str):
+    possible_dtypes = {
+        "float16": torch.float16,
+        "float32": torch.float32
+    }
+
+    try:
+        parsed_precision = possible_dtypes[precision]
+    except KeyError:
+        raise ValueError(f"Precision '{precision}' is not valid, supported are: {list(possible_dtypes.keys())}")
+
+    assert ((precision == "float16" and "cuda" in parsed_device) or precision != "float16"), (
+        "'float16' is only supported when using the GPU")
+
+    return parsed_precision
+
+
+def parse_model_configuration(model_configuration: List, general_device: str, general_precision: str):
+    parsed_general_device = parse_device(general_device)
+    parsed_general_precision = parse_precision(general_precision, parsed_general_device)
+
+    models = []
+
+    for specific_model_config in model_configuration:
+        error_string = f"'{specific_model_config}' is not a valid model configuration."
+
+        if isinstance(specific_model_config, str):
+            models.append((specific_model_config, parsed_general_device, parsed_general_precision))
+        elif isinstance(specific_model_config, dict):
+            assert len(specific_model_config) == 1, error_string
+
+            model_name, model_specifics = next(iter(specific_model_config.items()))
+
+            device = parse_device(model_specifics.get("device", general_device))
+            precision = parse_precision(model_specifics.get("precision", general_precision), device)
+
+            models.append((model_name, device, precision))
+        else:
+            raise RuntimeError(error_string)
+
+    return models
+
+
 def load_model(model_name: str, device: str, precision: str):
     possible_dtypes = {
         "float16": torch.float16,
