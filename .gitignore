@@ -1,5 +1,7 @@
 openai_key.json
 
+generated_scripts/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
