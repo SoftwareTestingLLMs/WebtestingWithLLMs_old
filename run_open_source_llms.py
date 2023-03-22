@@ -21,7 +21,7 @@ def run_model(histories, prompt_list, model_name, device, precision, folder_path
     for i, prompt in enumerate(prompt_list):
         histories = [h + _wrap(prompt) for h in histories]
         completions = generate(histories, tokenizer, model, device)
-        histories = [h + f"{truncate(c, model_name)}\n\n" for h, c in zip(histories, completions)]
+        histories = [h + f"{truncate(c)}\n\n" for h, c in zip(histories, completions)]
 
         # Prettify: removes two of the four newlines
         if histories[0][-4:] == "\n\n\n\n":

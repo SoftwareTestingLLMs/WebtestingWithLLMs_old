@@ -73,14 +73,7 @@ def find_re(string, pattern, start_pos):
     return m.start() if m else -1
 
 
-def truncate(completion, model_name: str):
-    if "codegen" in model_name:
-        return truncate_codegen_model_completion(completion)
-
-    return completion
-
-
-def truncate_codegen_model_completion(completion):
+def truncate(completion):
     terminals = [re.compile(r, re.MULTILINE) for r in ["^#", re.escape("<|endoftext|>"), "^'''", '^"""', "\n\n\n"]]
 
     prints = list(re.finditer('^print', completion, re.MULTILINE))
