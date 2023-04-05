@@ -1,5 +1,5 @@
 import re
-from typing import List
+from typing import List, Union
 
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
@@ -62,9 +62,18 @@ def parse_model_configuration(model_configuration: List, general_device: str, ge
     return models
 
 
-def load_model(model_name: str, device: str, precision: torch.dtype):
+def load_model(model_name: str, device: str, precision: Union[torch.dtype, str]):
+    if precision == "int8":
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            load_in_8bit=True,
+            device_map="auto"
+        )
+    else:
+        model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=precision).to(device)
+
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=precision).to(device)
+    
 
     tokenizer.pad_token = tokenizer.eos_token
 
@@ -98,6 +107,7 @@ def truncate(completion):
 
 def generate(prompt: List[str], tokenizer, model, device: str,
              num_return_sequences=1,
+             do_sample=True,
              temperature=0.6,
              max_new_tokens=256,
              top_k=0.0,
@@ -106,7 +116,7 @@ def generate(prompt: List[str], tokenizer, model, device: str,
     input_ids = tokenizer(prompt, truncation=True, padding=True, return_tensors="pt").input_ids.to(device)
     input_ids_len = input_ids.shape[1]
 
-    generated_ids = model.generate(input_ids, do_sample=True, num_return_sequences=num_return_sequences,
+    generated_ids = model.generate(input_ids, do_sample=do_sample, num_return_sequences=num_return_sequences,
                                    temperature=temperature, max_new_tokens=max_new_tokens, top_k=top_k,
                                    top_p=top_p, pad_token_id=pad_token_id, use_cache=True)
 
