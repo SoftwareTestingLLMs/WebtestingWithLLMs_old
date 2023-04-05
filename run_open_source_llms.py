@@ -37,7 +37,8 @@ def run_model(histories, prompt_list, model_name, device, precision, folder_path
         print("-" * 10)
 
     if not debug:
-        with open(os.path.join(folder_path, f"{model_name.replace('/', '-')}.py"), "w") as f:
+        with open(os.path.join(
+            folder_path, f"{model_name.replace('/', '-')}-{str(precision).replace('.', '-')}.py"), "w") as f:
             f.write(histories[0])
 
 
