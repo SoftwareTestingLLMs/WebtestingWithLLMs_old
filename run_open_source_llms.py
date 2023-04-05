@@ -10,17 +10,20 @@ from tools.hf_model_utils import load_model, generate, truncate, parse_model_con
 GENERATED_SCRIPTS_PATH = "generated_scripts"
 
 
-def run_model(histories, prompt_list, model_name, device, precision, folder_path, debug: bool):
+def run_model(histories, prompt_list, model_name, device, precision, folder_path, debug: bool, generation_config):
     print("Loading model...")
     tokenizer, model = load_model(model_name, device, precision)
     print("Loading finished")
 
     def _wrap(p):
         return f"# {p}\n"
+    
+    if not isinstance(prompt_list, list):
+        prompt_list = [prompt_list]
 
     for i, prompt in enumerate(prompt_list):
         histories = [h + _wrap(prompt) for h in histories]
-        completions = generate(histories, tokenizer, model, device)
+        completions = generate(histories, tokenizer, model, device, **generation_config)
         histories = [h + f"{truncate(c)}\n\n" for h, c in zip(histories, completions)]
 
         # Prettify: removes two of the four newlines
@@ -49,6 +52,8 @@ def main(config: str):
 
     models = parse_model_configuration(config["models"], config["general_device"], config["general_precision"])
 
+    generation_config = config.get("generation_config", {})
+
     debug = config["debug"]
 
     folder_path = None
@@ -63,7 +68,8 @@ def main(config: str):
             yaml.safe_dump(config, f, default_flow_style=False)
 
     for model_name, device, precision in models:
-        p = Process(target=run_model, args=(history, prompts, model_name, device, precision, folder_path, debug))
+        p = Process(target=run_model, args=(history, prompts, model_name, device, precision, folder_path, debug,
+                                             generation_config))
         p.start()
         p.join()
         p.close()

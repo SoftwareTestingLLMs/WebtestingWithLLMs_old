@@ -17,6 +17,9 @@ def parse_device(device: str):
 
 
 def parse_precision(precision: str, parsed_device: str):
+    if precision == "int8":
+        return precision
+
     possible_dtypes = {
         "float16": torch.float16,
         "float32": torch.float32
@@ -95,16 +98,17 @@ def truncate(completion):
 
 def generate(prompt: List[str], tokenizer, model, device: str,
              num_return_sequences=1,
-             temperature=0.2,
+             temperature=0.6,
              max_new_tokens=256,
+             top_k=0.0,
              top_p=0.95,
              pad_token_id=50256):
     input_ids = tokenizer(prompt, truncation=True, padding=True, return_tensors="pt").input_ids.to(device)
     input_ids_len = input_ids.shape[1]
 
     generated_ids = model.generate(input_ids, do_sample=True, num_return_sequences=num_return_sequences,
-                                   temperature=temperature, max_new_tokens=max_new_tokens, top_p=top_p,
-                                   pad_token_id=pad_token_id, use_cache=True)
+                                   temperature=temperature, max_new_tokens=max_new_tokens, top_k=top_k,
+                                   top_p=top_p, pad_token_id=pad_token_id, use_cache=True)
 
     decoded_generation = tokenizer.batch_decode(generated_ids[:, input_ids_len:])
 
